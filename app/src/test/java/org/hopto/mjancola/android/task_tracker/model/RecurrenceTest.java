@@ -121,8 +121,6 @@ public class RecurrenceTest {
         assertFalse("daily overdue should NOT be due=" + testRecurrence.dueDeltaMS(), (testRecurrence.dueDeltaMS() < 0));
     }
 
-
-
     @Test
     public void testWeeklyOverdue() {
         // due Mon/Thurs
@@ -137,9 +135,7 @@ public class RecurrenceTest {
         Recurrence testRecurrence = new Recurrence(Recurrence.RecurrenceType.Weekly, testWeekly, prevMS);
         testRecurrence.setTestTimeMS(testDate.getTimeInMillis());
         assertTrue("weekly overdue should be due=" + testRecurrence.dueDeltaMS(), (testRecurrence.dueDeltaMS() < 0));
-
     }
-
 
     @Test
     public void testWeeklyNotOverdue() {
@@ -155,7 +151,6 @@ public class RecurrenceTest {
         Recurrence testRecurrence = new Recurrence(Recurrence.RecurrenceType.Weekly, testWeekly, prevMS);
         testRecurrence.setTestTimeMS(testDate.getTimeInMillis());
         assertFalse("weekly should NOT be due=" + testRecurrence.dueDeltaMS(), (testRecurrence.dueDeltaMS() < 0));
-
     }
 
     @Test
@@ -171,12 +166,54 @@ public class RecurrenceTest {
         Recurrence testRecurrence = new Recurrence(Recurrence.RecurrenceType.Weekly, testWeekly, prevMS);
         testRecurrence.setTestTimeMS(testDate.getTimeInMillis());
         assertTrue("weekly overdue wrapping week should be due=" + testRecurrence.dueDeltaMS(), (testRecurrence.dueDeltaMS() < 0));
-
     }
 
     @Test
     public void testMonthlyOverdue() {
+        // due January/June
+        // set date to June 1, last completed to Feb 15
+        Calendar testDate = new GregorianCalendar(2016, Calendar.JUNE, 1, 10, 00) ;
+        Calendar lastCompleted = new GregorianCalendar(2016, Calendar.FEBRUARY, 15, 11, 02);
+        Long prevMS = lastCompleted.getTimeInMillis();
 
+        ArrayList<Integer> testMonthly = new ArrayList<Integer>();
+        testMonthly.add(Calendar.JANUARY);
+        testMonthly.add(Calendar.JUNE);
+        Recurrence testRecurrence = new Recurrence(Recurrence.RecurrenceType.Monthly, testMonthly, prevMS);
+        testRecurrence.setTestTimeMS(testDate.getTimeInMillis());
+        assertTrue("monthly overdue should be due=" + testRecurrence.dueDeltaMS(), (testRecurrence.dueDeltaMS() < 0));
+    }
+
+    @Test
+    public void testMonthlyNotOverdue() {
+        // due January/June
+        // set date to May 31, last completed to Feb 15
+        Calendar testDate = new GregorianCalendar(2016, Calendar.MAY, 31, 10, 00) ;
+        Calendar lastCompleted = new GregorianCalendar(2016, Calendar.FEBRUARY, 15, 11, 02);
+        Long prevMS = lastCompleted.getTimeInMillis();
+
+        ArrayList<Integer> testMonthly = new ArrayList<Integer>();
+        testMonthly.add(Calendar.JANUARY);
+        testMonthly.add(Calendar.JUNE);
+        Recurrence testRecurrence = new Recurrence(Recurrence.RecurrenceType.Monthly, testMonthly, prevMS);
+        testRecurrence.setTestTimeMS(testDate.getTimeInMillis());
+        assertFalse("monthly should NOT be due=" + testRecurrence.dueDeltaMS(), (testRecurrence.dueDeltaMS() < 0));
+    }
+
+    @Test
+    public void testMonthlyWithWrapOverdue() {
+        // due January/June
+        // set date to Jan 1, last completed June 15, 2 years ago
+        Calendar testDate = new GregorianCalendar(2016, Calendar.JANUARY, 1, 10, 00) ;
+        Calendar lastCompleted = new GregorianCalendar(2014, Calendar.JUNE, 15, 11, 02);
+        Long prevMS = lastCompleted.getTimeInMillis();
+
+        ArrayList<Integer> testMonthly = new ArrayList<Integer>();
+        testMonthly.add(Calendar.JANUARY);
+        testMonthly.add(Calendar.JUNE);
+        Recurrence testRecurrence = new Recurrence(Recurrence.RecurrenceType.Monthly, testMonthly, prevMS);
+        testRecurrence.setTestTimeMS(testDate.getTimeInMillis());
+        assertTrue("monthly overdue with wrap should be due=" + testRecurrence.dueDeltaMS(), (testRecurrence.dueDeltaMS() < 0));
     }
 
     @Test

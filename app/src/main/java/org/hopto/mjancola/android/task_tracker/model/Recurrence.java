@@ -25,8 +25,8 @@ public class Recurrence {
      * @param type enum Recurrence type
      * @param value depends on type
      *   Type daily -> value is ignored
-     *   Type weekly -> array of DayOfWeek enum
-     *   Type monthly-> array of day of month (note, value exceeding a given month equals last day of month)
+     *   Type weekly -> array of Calendar.SUNDAY, MONDAY... etc
+     *   Type monthly-> array of Calendar.JANUARY, FEBRUARY... etc
      *   Type yearly -> array of day of year (represented numerically as MMDD)
      *   Type Days, Weeks, Months, Years -> array(0) is integer number of items, for example every 3 months
      * @param lastCompleted long value ms since epoch, defaults to 0 if not specified
@@ -74,13 +74,31 @@ public class Recurrence {
         Long dueDate = 0l;
 
         switch (type) {
+            case Monthly:
+                cal.setTimeInMillis(lastCompleted);
+                int lastMonth = cal.get(Calendar.MONTH);
+                int monthsDueAfterLast;
+                // look for next month
+                for (monthsDueAfterLast=1; monthsDueAfterLast<13; monthsDueAfterLast++) {  // max of 12 months available
+                    if (this.getValue().contains((lastMonth+monthsDueAfterLast) % 7)) {
+                        // found next month
+                        break;
+                    }
+                }
+                cal.add(Calendar.MONTH, monthsDueAfterLast);
+                // adjust time to first day and minute of month
+                cal.set(Calendar.DAY_OF_MONTH, 1);
+                cal.set(Calendar.HOUR, 0);  // set the time to 12:01a
+                cal.set(Calendar.MINUTE, 1);
+                dueDate = cal.getTimeInMillis();
+                break;
             case Weekly:
                 cal.setTimeInMillis(lastCompleted);
                 int lastDay = cal.get(Calendar.DAY_OF_WEEK);
                 int daysDueAfterLast;
                 // look for next day
                 for (daysDueAfterLast=1; daysDueAfterLast<8; daysDueAfterLast++) {  // max of 7 days available
-                    if (this.getValue().contains((lastDay+daysDueAfterLast) & 7)) {
+                    if (this.getValue().contains((lastDay+daysDueAfterLast) % 7)) {
                         // found next day
                         break;
                     }

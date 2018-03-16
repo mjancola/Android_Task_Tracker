@@ -90,7 +90,15 @@ public class Task {
         long showIfAfter = now-DUE_BUFFER_MS;
         if (showIfAfter > due) { */
         //if ((last + getInterval()) > nowDays - 7l) {
-        if ((getLast_completed() + (getInterval()*1000*60*60*24)) < (System.currentTimeMillis() - DUE_BUFFER_MS)) {
+        long lastC = getLast_completed();
+        long interval = getInterval();
+        long multiplier = 1000l*60l*60l*24l;
+        long now = System.currentTimeMillis();
+        long due = lastC + (interval*multiplier);
+        long currentWindowStart = now - DUE_BUFFER_MS;
+        if (now > due) {
+        // if (due < currentWindowStart) {
+        // if ((getLast_completed() + (getInterval()*1000*60*60*24)) < (System.currentTimeMillis() - DUE_BUFFER_MS)) {
             return true;
         } else {
             return false;
